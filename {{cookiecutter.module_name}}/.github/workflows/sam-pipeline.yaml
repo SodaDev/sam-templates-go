@@ -27,4 +27,3 @@ jobs:
         uses: aws-actions/setup-sam@v1
       - name: Build and deploy application
         run: make deploy
-        working-directory: {{cookiecutter.project_name}}

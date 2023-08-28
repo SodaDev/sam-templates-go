@@ -1,13 +1,13 @@
-# {{ cookiecutter.project_name }}
+# {{ cookiecutter.module_name }}
 
 ### Build
 ```bash
-{{ cookiecutter.project_name }}$ make build
+make build
 ```
 
 ### Deploy
 ```bash
-{{ cookiecutter.project_name }}$ make deploy
+make deploy
 ```
 
 ### Delete

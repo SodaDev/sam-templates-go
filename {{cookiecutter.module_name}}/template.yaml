@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform:
+  - AWS::LanguageExtensions
+  - AWS::Serverless-2016-10-31
+Description: SAM Template for {{ cookiecutter.module_name }}
+
+Parameters:
+  Company:
+    Type: String
+  Vpc:
+    Type: String
+  Project:
+    Type: String
+  ProjectLower:
+    Type: String
+  ProjectGroup:
+    Type: String
+  Environment:
+    Type: String
+  Version:
+    Type: String
+#  TracingName:
+#    Type: String
+
+Mappings:
+  Properties:
+    DEV:
+      loggingLevel: 'info'
+      lambdaConcurrentExecutions: 25
+    SIT:
+      loggingLevel: 'info'
+      lambdaConcurrentExecutions: 25
+    UAT:
+      loggingLevel: 'info'
+      lambdaConcurrentExecutions: 25
+    OAT:
+      loggingLevel: 'info'
+      lambdaConcurrentExecutions: 25
+    PROD:
+      loggingLevel: 'info'
+      lambdaConcurrentExecutions: 25
+
+Resources:
+  FunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub
+        - '/aws/lambda/${LambdaName}'
+        - { LambdaName: !Ref {{cookiecutter.module_name}}Function }
+      RetentionInDays: 14
+
+  {{cookiecutter.module_name}}Function:
+    # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ..
+      Handler: bootstrap
+      Runtime: provided.al2
+      AutoPublishAlias: live
+      AutoPublishAliasAllProperties: true
+      Architectures:
+        - arm64
+      Tracing: Active
+#       FunctionName: <FUNCTION_NAME>
+#       Description: Fill it
+      Timeout: 30
+      MemorySize: 128
+      ReservedConcurrentExecutions: !FindInMap [ Properties, !Ref Environment, lambdaConcurrentExecutions ]
+      Environment:
+        Variables:
+          LOG_LEVEL: !FindInMap [ Properties, !Ref Environment, loggingLevel ]
+          APPLICATION: <Fill me>
+          PROJECT: !Ref ProjectLower
+          PROJECT_GROUP: !Ref ProjectGroup
+          VERSION: !Ref Version
+          ATTRIBUTES_PREFIX: <Fill me>
+          {% raw %}
+#          OPENTELEMETRY_COLLECTOR_CONFIG_FILE:
+#            !Sub
+#            - '{{resolve:ssm:${ConfigLocation}}}'
+#            - ConfigLocation:
+#                Fn::ImportValue: !Sub ${Company}-${Vpc}-OBSERVABILITY-${Environment}::CollectorConfig::Ex/Internal
+#          OPENTELEMETRY_EXTENSION_LOG_LEVEL: warn
+#          OTEL_SERVICE_NAME: !Ref TracingName
+#      Layers:
+#        - !Sub
+#          - '{{resolve:ssm:${LayerParam}}}'
+#          - LayerParam:
+#              Fn::ImportValue: !Sub ${Company}-${Vpc}-OBSERVABILITY-${Environment}::LambdaLayer::arm64
+        {% endraw %}
+#      Policies:
+#        - Fn::ImportValue:
+#            !Sub ${Company}-${Vpc}-OBSERVABILITY-${Environment}::CollectorConfig::AccessPolicy
+#        - Fn::ImportValue:
+#            !Sub ${Company}-${Vpc}-OBSERVABILITY-${Environment}::CollectorConfig::DisableXRayPolicy
+#      Tags:
+#        Name: <FUNCTION_NAME>
+    Metadata: # Manage esbuild properties
+      BuildMethod: makefile
+
+  FunctionErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Lambda errors
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref {{cookiecutter.module_name}}Function
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 5
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - Fn::ImportValue: !Sub <ALARM_TOPIC>
+      OKActions:
+        - Fn::ImportValue: !Sub <ALARM_TOPIC>

@@ -18,10 +18,25 @@ else
 fi
 
 if [ ! -f "../Makefile" ]; then
-    echo "Creating Makefile"
-    mv Makefile ../
+    echo "Creating root Makefile"
+    mv rootMakefile ../Makefile
+    echo -en "\n" >> ../Makefile
+    cat Makefile >> ../Makefile
+    rm Makefile
+else
+    echo "root Makefile already exists"
+    echo -en "\n" >> ../Makefile
+    cat Makefile >> ../Makefile
+    rm rootMakefile
+    rm Makefile
+fi
+
+if [ ! -f "../go.mod" ]; then
+    echo "Creating go.mod"
+    mv go.mod ../
 else
     echo "Makefile already exists"
+    rm go.mod
 fi
 
 if [ ! -f "../template.yaml" ]; then
@@ -34,7 +49,7 @@ else
     yaml_file="../template.yaml"
 
     # Specify the item you want to check
-    projectResourceKey="{{cookiecutter.project_name | replace('-', '_')}}"
+    projectResourceKey="{{cookiecutter.module_name | replace('-', '_')}}"
     newYamlResourceKey="Resources.$projectResourceKey"
 
     # Check if the item exists in the YAML file
@@ -47,7 +62,16 @@ else
         yaml_object_to_add=$(cat <<EOF
 Type: AWS::Serverless::Application
 Properties:
-  Location: ./{{cookiecutter.project_name}}/template.yaml
+  Location: ./{{cookiecutter.module_name}}/template.yaml
+  # Optional parameter that can have default value overridden
+  Parameters:
+    Company: !Ref Company
+    Project: !Ref Project
+    ProjectLower: !Ref ProjectLower
+    Vpc: !Ref Vpc
+    ProjectGroup: !Ref ProjectGroup
+    Environment: !Ref Environment
+    Version: !Ref Version
 EOF
 )
         # Add the item and its value to the YAML file

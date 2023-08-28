@@ -1,0 +1,15 @@
+build:
+	sam build -b deployments/
+
+deploy:
+	sam deploy \
+	    --stack-name {{cookiecutter.stack_name}} \
+	    --s3-bucket $(s3Bucket) \
+	    --s3-prefix={{cookiecutter.project_name}} \
+	    --no-confirm-changeset --no-fail-on-empty-changeset \
+		--capabilities CAPABILITY_IAM --parameter-overrides Vpc=$(vpc) Environment=$(env) Version=$(version) \
+		--tags Project={{cookiecutter.project_name | upper }} Component=<FILL_COMPONENT> Environment=$(env) ProductOwner=gowinm@ryanair.com TechnicalOwner=sodkieiwczm@ryanair.com Version=$(version) \
+		--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
+
+deploy_local: build
+	make deploy s3Bucket=<FILL_BUCKET> vpc=SANDBOX env=DEV version=localTest
