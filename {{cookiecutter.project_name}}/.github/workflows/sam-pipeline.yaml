@@ -1,0 +1,30 @@
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION : "eu-west-1"
+  AWS_DEPLOY_ROLE: "<provide your role here>"
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Assume AWS role
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.AWS_DEPLOY_ROLE }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+      - name: Setup SAM
+        uses: aws-actions/setup-sam@v1
+      - name: Build and deploy application
+        run: make deploy
+        working-directory: {{cookiecutter.project_name}}

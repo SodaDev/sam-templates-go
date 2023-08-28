@@ -1,0 +1,15 @@
+{
+    "project_name": "Name of the project",
+    "stack_name": "Name of CloudFormation stack",
+    "runtime": "nodejs16.x",
+    "architectures": {
+        "value": []
+    },
+    "Powertools for AWS Lambda (TypeScript) Tracing": ["disabled","enabled"],
+    "Powertools for AWS Lambda (TypeScript) Metrics": ["disabled","enabled"],
+    "_copy_without_render": [
+        ".gitignore",
+        ".github/workflows/sam-pipeline.yaml"
+    ]
+
+}
