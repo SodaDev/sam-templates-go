@@ -12,6 +12,6 @@ var (
 )
 
 func main() {
-	handler := handler.New(loggerConfig)
-	frotel.Start(handler.Handle)
+	lambdaHandler := handler.New(loggerConfig)
+	frotel.Start(lambdaHandler.Handle)
 }
