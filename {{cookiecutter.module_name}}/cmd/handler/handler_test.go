@@ -6,12 +6,12 @@ import (
 	"github.com/Ryanair/gofrlib-test/frContainers"
 	"github.com/Ryanair/gofrlib-test/testDefaults"
 	"github.com/stretchr/testify/suite"
-	"github.com/testcontainers/testcontainers-go"
 	"testing"
 )
 
 type HandlerIntegrationSuite struct {
 	frContainers.BaseLocalstackIntegrationSuite
+	handler *LambdaHandler
 }
 
 func TestHandlerIntegrationSuite(t *testing.T) {
@@ -24,6 +24,7 @@ func TestHandlerIntegrationSuite(t *testing.T) {
 
 func (suite *HandlerIntegrationSuite) SetupTest() {
 	fmt.Println("Before test")
+	suite.handler = New(testDefaults.LoggerConfig)
 }
 
 func (suite *HandlerIntegrationSuite) TearDownTest() {
@@ -32,7 +33,7 @@ func (suite *HandlerIntegrationSuite) TearDownTest() {
 
 func (suite *HandlerIntegrationSuite) Test_RenameMe() {
 	// WHEN
-	err := New(testDefaults.LoggerConfig).Handle(context.Background())
+	err := suite.handler.Handle(context.Background())
 
 	// THEN
 	suite.NoError(err)
