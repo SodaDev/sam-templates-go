@@ -1,5 +1,17 @@
-build:
+build: test
 	sam build -b deployments/
+
+test:
+	mkdir -p testResults
+	if go test ./... -json -cover -coverprofile coverage.out > testResults.json; then \
+  		go tool cover -html coverage.out -o testResults/coverage.html; \
+		cat testResults.json | go-test-report -o testResults/test_report.html; \
+	else \
+	   	echo 'Application tests failed. open test_report.html for details'; \
+	   	go tool cover -html coverage.out -o testResults/coverage.html; \
+		cat testResults.json | go-test-report -o testResults/test_report.html; \
+		exit 1 ;\
+	fi
 
 deploy:
 	sam deploy \
@@ -8,8 +20,8 @@ deploy:
 	    --s3-prefix={{cookiecutter.project_name}} \
 	    --no-confirm-changeset --no-fail-on-empty-changeset \
 		--capabilities CAPABILITY_IAM --parameter-overrides Vpc=$(vpc) Environment=$(env) Version=$(version) \
-		--tags Project={{cookiecutter.project_name | upper }} Component=<FILL_COMPONENT> Environment=$(env) ProductOwner=gowinm@ryanair.com TechnicalOwner=sodkieiwczm@ryanair.com Version=$(version) \
+		--tags Project={{cookiecutter.project_name | upper }} Component=API Environment=$(env) ProductOwner=gowinm@ryanair.com TechnicalOwner=sodkieiwczm@ryanair.com Version=$(version) \
 		--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
 
 deploy_local: build
-	make deploy s3Bucket=<FILL_BUCKET> vpc=SANDBOX env=DEV version=localTest
+	make deploy s3Bucket=coreapi-jenkins-cloudformation-package vpc=SANDBOX env=DEV version=localTest
