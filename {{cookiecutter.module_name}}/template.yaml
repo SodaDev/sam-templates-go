@@ -75,24 +75,19 @@ Resources:
           VERSION: !Ref Version
           ATTRIBUTES_PREFIX: <Fill me>
           {% raw %}
-#          OPENTELEMETRY_COLLECTOR_CONFIG_FILE:
-#            !Sub
-#            - '{{resolve:ssm:${ConfigLocation}}}'
-#            - ConfigLocation:
-#                Fn::ImportValue: !Sub ${Company}-${Vpc}-OBSERVABILITY-${Environment}::CollectorConfig::Ex/Internal
-#          OPENTELEMETRY_EXTENSION_LOG_LEVEL: warn
-#          OTEL_SERVICE_NAME: !Ref TracingName
-#      Layers:
-#        - !Sub
-#          - '{{resolve:ssm:${LayerParam}}}'
-#          - LayerParam:
-#              Fn::ImportValue: !Sub ${Company}-${Vpc}-OBSERVABILITY-${Environment}::LambdaLayer::arm64
+          OPENTELEMETRY_COLLECTOR_CONFIG_FILE:
+            !Sub
+            - '{{resolve:ssm:${ConfigLocation}}}'
+            - ConfigLocation:
+                Fn::ImportValue: OTEL::CollectorConfig::S3Location
+          OPENTELEMETRY_EXTENSION_LOG_LEVEL: warn
+          OTEL_SERVICE_NAME: !Ref TracingName
         {% endraw %}
-#      Policies:
-#        - Fn::ImportValue:
-#            !Sub ${Company}-${Vpc}-OBSERVABILITY-${Environment}::CollectorConfig::AccessPolicy
-#        - Fn::ImportValue:
-#            !Sub ${Company}-${Vpc}-OBSERVABILITY-${Environment}::CollectorConfig::DisableXRayPolicy
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:901920570463:layer:aws-otel-collector-arm64-ver-0-90-1:1
+      Policies:
+        - Fn::ImportValue: OTEL::CollectorConfig::AccessPolicy
+        - Fn::ImportValue: OTEL::CollectorConfig::DisableXRayReportingPolicy
 #      Tags:
 #        Name: <FUNCTION_NAME>
     Metadata: # Manage esbuild properties
