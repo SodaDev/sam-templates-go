@@ -1,6 +1,6 @@
 module {{cookiecutter.project_name}}
 
-go 1.20
+go 1.21
 
 require (
 	github.com/Ryanair/gofrlib v1.0.36

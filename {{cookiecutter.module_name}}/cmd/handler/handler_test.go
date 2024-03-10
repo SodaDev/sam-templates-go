@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/Ryanair/gofrlib-test/frContainers"
 	"github.com/Ryanair/gofrlib-test/testDefaults"
-	"github.com/stretchr/testify/suite"
+	"github.com/testcontainers/testcontainers-go"
 	"testing"
 )
 
