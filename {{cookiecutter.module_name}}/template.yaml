@@ -5,22 +5,14 @@ Transform:
 Description: SAM Template for {{ cookiecutter.module_name }}
 
 Parameters:
-  Company:
-    Type: String
-  Vpc:
-    Type: String
   Project:
-    Type: String
-  ProjectLower:
     Type: String
   ProjectGroup:
     Type: String
   Environment:
     Type: String
-  Version:
+  TracingName:
     Type: String
-#  TracingName:
-#    Type: String
 
 Mappings:
   Properties:
@@ -72,7 +64,6 @@ Resources:
           APPLICATION: <Fill me>
           PROJECT: !Ref ProjectLower
           PROJECT_GROUP: !Ref ProjectGroup
-          VERSION: !Ref Version
           ATTRIBUTES_PREFIX: <Fill me>
           {% raw %}
           OPENTELEMETRY_COLLECTOR_CONFIG_FILE:
@@ -90,7 +81,7 @@ Resources:
         - Fn::ImportValue: OTEL::CollectorConfig::DisableXRayReportingPolicy
 #      Tags:
 #        Name: <FUNCTION_NAME>
-    Metadata: # Manage esbuild properties
+    Metadata:
       BuildMethod: makefile
 
   FunctionErrorsAlarm:
