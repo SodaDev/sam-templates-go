@@ -62,7 +62,7 @@ Resources:
         Variables:
           LOG_LEVEL: !FindInMap [ Properties, !Ref Environment, loggingLevel ]
           APPLICATION: <Fill me>
-          PROJECT: !Ref ProjectLower
+          PROJECT: !Ref Project
           PROJECT_GROUP: !Ref ProjectGroup
           ATTRIBUTES_PREFIX: <Fill me>
           {% raw %}
