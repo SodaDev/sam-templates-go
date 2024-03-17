@@ -65,6 +65,7 @@ Resources:
           PROJECT: !Ref Project
           PROJECT_GROUP: !Ref ProjectGroup
           ATTRIBUTES_PREFIX: <Fill me>
+          VERSION: 'N/A'
           {% raw %}
           OPENTELEMETRY_COLLECTOR_CONFIG_FILE:
             !Sub
