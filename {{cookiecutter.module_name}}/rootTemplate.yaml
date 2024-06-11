@@ -4,21 +4,11 @@ Transform:
   - AWS::Serverless-2016-10-31
 
 Parameters:
-  Company:
-    Type: String
-    Default: FR
   Project:
-    Type: String
-  ProjectLower:
-    Type: String
-  Vpc:
     Type: String
   ProjectGroup:
     Type: String
-    Default: core-api
   Environment:
-    Type: String
-  Version:
     Type: String
 
 Resources:
@@ -28,10 +18,7 @@ Resources:
       Location: ./{{cookiecutter.module_name}}/template.yaml
       # Optional parameter that can have default value overridden
       Parameters:
-        Company: !Ref Company
         Project: !Ref Project
-        ProjectLower: !Ref ProjectLower
-        Vpc: !Ref Vpc
         ProjectGroup: !Ref ProjectGroup
         Environment: !Ref Environment
-        Version: !Ref Version
+        TracingName: Fill it

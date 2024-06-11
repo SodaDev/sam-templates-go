@@ -65,13 +65,10 @@ Properties:
   Location: ./{{cookiecutter.module_name}}/template.yaml
   # Optional parameter that can have default value overridden
   Parameters:
-    Company: !Ref Company
     Project: !Ref Project
-    ProjectLower: !Ref ProjectLower
-    Vpc: !Ref Vpc
     ProjectGroup: !Ref ProjectGroup
     Environment: !Ref Environment
-    Version: !Ref Version
+    TracingName: !Ref TracingName
 EOF
 )
         # Add the item and its value to the YAML file

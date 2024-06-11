@@ -15,12 +15,14 @@ test:
 
 deploy:
 	sam deploy \
+		--template-file deployments/template.yaml \
 	    --stack-name {{cookiecutter.stack_name}} \
-	    --s3-bucket $(s3Bucket) \
+	    --s3-bucket $(shell aws ssm get-parameter --name sam-bucket-name --query "Parameter.Value" --output text) \
 	    --s3-prefix={{cookiecutter.project_name}} \
 	    --no-confirm-changeset --no-fail-on-empty-changeset \
-		--capabilities CAPABILITY_IAM --parameter-overrides Vpc=$(vpc) Environment=$(env) Version=$(version) \
-		--tags Project={{cookiecutter.project_name | upper }} Component=API Environment=$(env) ProductOwner=gowinm@ryanair.com TechnicalOwner=sodkieiwczm@ryanair.com Version=$(version) \
+		--tags Project={{cookiecutter.project_name | upper }} \
+        --parameter-overrides \
+            LogLevel="INFO" \
 		--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
 
 deploy_local: build
