@@ -41,6 +41,14 @@ Resources:
         - { LambdaName: !Ref {{cookiecutter.module_name}}Function }
       RetentionInDays: 14
 
+  FunctionLogGroupSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      LogGroupName: !Ref FunctionLogGroup
+      FilterPattern: ""
+      DestinationArn:
+        Fn::ImportValue: !Sub ${Company}-${Vpc}-CENTRAL-LOGGING-${Environment}-LogStreamer
+
   {{cookiecutter.module_name}}Function:
     # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Type: AWS::Serverless::Function
